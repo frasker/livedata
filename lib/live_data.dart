@@ -293,19 +293,29 @@ class _LifecycleBoundObserver<T> extends _ObserverWrapper<T>
   }
 
   @override
-  onReady(LifecycleOwner owner) {}
+  onReady(LifecycleOwner owner) {
+    onStateChanged(owner,Event.ON_READY);
+  }
 
   @override
-  onDefunct(LifecycleOwner owner) {}
+  onDefunct(LifecycleOwner owner) {
+    onStateChanged(owner,Event.ON_DEFUNCT);
+  }
 
   @override
-  onInactive(LifecycleOwner owner) {}
+  onInactive(LifecycleOwner owner) {
+    onStateChanged(owner,Event.ON_INACTIVE);
+  }
 
   @override
-  onPause(LifecycleOwner owner) {}
+  onPause(LifecycleOwner owner) {
+    onStateChanged(owner,Event.ON_PAUSE);
+  }
 
   @override
-  onResume(LifecycleOwner owner) {}
+  onResume(LifecycleOwner owner) {
+    onStateChanged(owner,Event.ON_RESUME);
+  }
 
   @override
   onStateChanged(LifecycleOwner owner, Event event) {

@@ -375,7 +375,7 @@ class FastSafeIterableMap<K, V> extends SafeIterableMap<K, V> {
   /// Returns {@code true} if this map contains a mapping for the specified
   /// key.
   bool containsValue(K key) {
-    return _mHashMap.containsValue(key);
+    return _mHashMap.containsKey(key);
   }
 
   /// Return an entry added to prior to an entry associated with the given key.
