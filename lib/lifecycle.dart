@@ -187,7 +187,7 @@ class LifecycleRegistry extends Lifecycle {
   }
 
   _backwardPass(LifecycleOwner lifecycleOwner) {
-    Iterator<Entry<LifecycleObserver, _ObserverWithState>> descendingIterator =
+    Iterator<MapEntry<LifecycleObserver, _ObserverWithState>> descendingIterator =
         _mObserverMap.descendingIterator();
     while (descendingIterator.moveNext() && !_mNewEventOccurred) {
       Entry<LifecycleObserver, _ObserverWithState> entry =

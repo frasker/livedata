@@ -31,5 +31,13 @@ void main() {
     count.value = 5;
     count.value = 6;
     count.value = 7;
+
+
+    SafeIterableMap<int,String> map = new SafeIterableMap<int,String>();
+
+    Iterator<MapEntry<int, String>> descendingIterator = map.descendingIterator();
+
+    print("hhhhh " + descendingIterator.toString());
+
   });
 }
