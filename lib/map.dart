@@ -127,12 +127,8 @@ class SafeIterableMap<K, V> extends Iterable<MapEntry<K, V>> {
 
   @override
   bool operator ==(obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (!(obj is SafeIterableMap)) {
+    if (obj.runtimeType != runtimeType)
       return false;
-    }
     SafeIterableMap map = obj;
     if (this.length != map.length) {
       return false;
@@ -198,12 +194,8 @@ class Entry<K, V> implements MapEntry<K, V> {
 
   @override
   bool operator ==(other) {
-    if (other == this) {
-      return true;
-    }
-    if (!(other is Entry)) {
+    if (other.runtimeType != runtimeType)
       return false;
-    }
     Entry entry = other;
     return _mKey == entry._mKey && _mValue == entry._mValue;
   }
