@@ -8,11 +8,7 @@ import 'map.dart';
 /// @param <T> The type of the parameter
 ///
 /// @see LiveData LiveData - for a usage description.
-abstract class Observer<T> {
-  /// Called when the data is changed.
-  /// @param t  The new data
-  void onChanged(T t);
-}
+typedef Observer<T> = Function(T t);
 
 class LiveData<T> {
   static final int START_VERSION = -1;
@@ -43,7 +39,7 @@ class LiveData<T> {
     }
     observer.mLastVersion = _mVersion;
     //noinspection unchecked
-    observer.mObserver.onChanged(_mData as T);
+    observer.mObserver(_mData as T);
   }
 
   void _dispatchingValue(_ObserverWrapper initiator) {
