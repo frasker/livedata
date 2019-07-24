@@ -308,7 +308,13 @@ class _LifecycleBoundObserver<T> extends _ObserverWrapper<T>
   onResume(LifecycleOwner owner) {}
 
   @override
-  onStateChanged(LifecycleOwner owner, Event event) {}
+  onStateChanged(LifecycleOwner owner, Event event) {
+    if (mOwner.getLifecycle().getCurrentState() == LifeState.DESTROYED) {
+      mLiveData.removeObserver(mObserver);
+      return;
+    }
+    activeStateChanged(shouldBeActive());
+  }
 }
 
 class _AlwaysActiveObserver<T> extends _ObserverWrapper<T> {
