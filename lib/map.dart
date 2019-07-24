@@ -118,7 +118,7 @@ class SafeIterableMap<K, V> extends Iterable<MapEntry<K, V>> {
   }
 
   /// return an iterator with additions.
-  IteratorWithAdditions iteratorWithAdditions() {
+  IteratorWithAdditions<K, V> iteratorWithAdditions() {
     IteratorWithAdditions<K, V> iterator =
         new IteratorWithAdditions<K, V>(this);
     _mIterators[iterator] = false;
@@ -244,6 +244,7 @@ abstract class _ListIterator<K, V>
   bool moveNext() {
     if (_hasNext()) {
       mCurrent = _next();
+      return true;
     }
     return false;
   }
@@ -332,6 +333,7 @@ class IteratorWithAdditions<K, V>
   bool moveNext() {
     if (_hasNext()) {
       _next();
+      return true;
     }
     return false;
   }

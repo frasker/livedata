@@ -8,20 +8,21 @@ import 'map.dart';
 /// @param <T> The type of the parameter
 ///
 /// @see LiveData LiveData - for a usage description.
-typedef Observer<T> = Function(T t);
+typedef Observer<T> = void Function(T t);
 
 class LiveData<T> {
   static final int START_VERSION = -1;
   static final Object NOT_SET = new Object();
-  SafeIterableMap _mObservers = new SafeIterableMap();
+  SafeIterableMap<Observer<T>, _ObserverWrapper<T>> _mObservers =
+      new SafeIterableMap<Observer<T>, _ObserverWrapper<T>>();
 
   int _mActiveCount = 0;
   Object _mData = NOT_SET;
   int _mVersion = START_VERSION;
-  bool _mDispatchingValue;
-  bool _mDispatchInvalidated;
+  bool _mDispatchingValue = false;
+  bool _mDispatchInvalidated = false;
 
-  void _considerNotify(_ObserverWrapper observer) {
+  void _considerNotify(_ObserverWrapper<T> observer) {
     if (!observer.mActive) {
       return;
     }
@@ -42,7 +43,7 @@ class LiveData<T> {
     observer.mObserver(_mData as T);
   }
 
-  void _dispatchingValue(_ObserverWrapper initiator) {
+  void _dispatchingValue(_ObserverWrapper<T> initiator) {
     if (_mDispatchingValue) {
       _mDispatchInvalidated = true;
       return;
@@ -54,9 +55,9 @@ class LiveData<T> {
         _considerNotify(initiator);
         initiator = null;
       } else {
-        for (IteratorWithAdditions<Observer<T>, _ObserverWrapper> iterator =
-                _mObservers.iteratorWithAdditions();
-            iterator.moveNext();) {
+        IteratorWithAdditions<Observer<T>, _ObserverWrapper<T>> iterator =
+            _mObservers.iteratorWithAdditions();
+        while (iterator.moveNext()) {
           _considerNotify(iterator.current.value);
           if (_mDispatchInvalidated) {
             break;
@@ -98,8 +99,8 @@ class LiveData<T> {
       // ignore
       return;
     }
-    _LifecycleBoundObserver wrapper =
-        new _LifecycleBoundObserver(this, owner, observer: observer);
+    _LifecycleBoundObserver<T> wrapper =
+        new _LifecycleBoundObserver<T>(this, owner, observer);
     _ObserverWrapper existing = _mObservers.putIfAbsent(observer, wrapper);
     if (existing != null && !existing.isAttachedTo(owner)) {
       throw new Exception(
@@ -124,7 +125,8 @@ class LiveData<T> {
   ///
   /// @param observer The observer that will receive the events
   void observeForever(Observer<T> observer) {
-    _AlwaysActiveObserver wrapper = new _AlwaysActiveObserver(this, observer);
+    _AlwaysActiveObserver<T> wrapper =
+        new _AlwaysActiveObserver<T>(this, observer);
     _ObserverWrapper existing = _mObservers.putIfAbsent(observer, wrapper);
     if (existing != null && existing is _LifecycleBoundObserver) {
       throw new Exception(
@@ -139,7 +141,7 @@ class LiveData<T> {
   /// Removes the given observer from the observers list.
   ///
   /// @param observer The Observer to receive events.
-  void removeObserver(final Observer<T> observer) {
+  void removeObserver(Observer<T> observer) {
     _ObserverWrapper removed = _mObservers.remove(observer);
     if (removed == null) {
       return;
@@ -221,7 +223,7 @@ class LiveData<T> {
 abstract class _ObserverWrapper<T> {
   final LiveData<T> mLiveData;
   final Observer<T> mObserver;
-  bool mActive;
+  bool mActive = false;
   int mLastVersion = LiveData.START_VERSION;
 
   bool isAttachedTo(LifecycleOwner owner) {
@@ -270,7 +272,8 @@ class _LifecycleBoundObserver<T> extends _ObserverWrapper<T>
   final LiveData<T> mLiveData;
   final LifecycleOwner mOwner;
 
-  _LifecycleBoundObserver(this.mLiveData, this.mOwner, {Observer<T> observer})
+  _LifecycleBoundObserver(
+      this.mLiveData, this.mOwner, Observer<T> observer)
       : super(mLiveData, observer);
 
   @override
