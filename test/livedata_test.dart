@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:livedata/livedata.dart';
+import 'package:livedata/transformations.dart';
 
 abstract class TestIn<T> {
   onChange(T t);
@@ -38,6 +39,19 @@ void main() {
     Iterator<MapEntry<int, String>> descendingIterator = map.descendingIterator();
 
     print("hhhhh " + descendingIterator.toString());
+
+
+    MutableLiveData<int> num = MutableLiveData();
+
+    MutableLiveData<String> convert= Transformations.map(num, (num){
+      return "变成字符串 $num";
+    });
+
+    num.value = 8;
+
+    convert.observeForever((str){
+      print("----------------   $str");
+    });
 
   });
 }
