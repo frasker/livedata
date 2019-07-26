@@ -58,7 +58,9 @@ class _MyHomePageState extends LifeCycleState<MyHomePage> {
 
 ```
 ## 如何依赖
-暂时请依赖github
+请依赖github
 ```
- livedata:
-    git: https://github.com/frasker/livedata
+   livedata:
+    git:
+        url: https://github.com/frasker/livedata
+        ref: 1.0.0-alpha
