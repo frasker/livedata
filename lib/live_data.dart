@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'lifecycle.dart';
@@ -150,6 +151,22 @@ class LiveData<T> {
     removed.activeStateChanged(false);
   }
 
+  ValueNotifier<T> _valueNotifier;
+
+  void _toValueNotifier(T t) {
+    _valueNotifier.value = value;
+  }
+
+  /// 一个LiveData只能返回同一个ValueNotifier
+  ValueNotifier<T> toValueNotifier() {
+    if (_valueNotifier != null) {
+      return _valueNotifier;
+    }
+    _valueNotifier = ValueNotifier<T>(value);
+    observeForever(_toValueNotifier);
+    return _valueNotifier;
+  }
+
   /// Removes all observers that are tied to the given {@link LifecycleOwner}.
   ///
   /// @param owner The {@code LifecycleOwner} scope for the observers to be removed.
@@ -159,6 +176,7 @@ class LiveData<T> {
         removeObserver(entry.key);
       }
     }
+    removeObserver(_toValueNotifier);
   }
 
   /// Sets the value. If there are active observers, the value will be dispatched to them.
@@ -272,8 +290,7 @@ class _LifecycleBoundObserver<T> extends _ObserverWrapper<T>
   final LiveData<T> mLiveData;
   final LifecycleOwner mOwner;
 
-  _LifecycleBoundObserver(
-      this.mLiveData, this.mOwner, Observer<T> observer)
+  _LifecycleBoundObserver(this.mLiveData, this.mOwner, Observer<T> observer)
       : super(mLiveData, observer);
 
   @override
@@ -294,27 +311,27 @@ class _LifecycleBoundObserver<T> extends _ObserverWrapper<T>
 
   @override
   onReady(LifecycleOwner owner) {
-    onStateChanged(owner,Event.ON_READY);
+    onStateChanged(owner, Event.ON_READY);
   }
 
   @override
   onDefunct(LifecycleOwner owner) {
-    onStateChanged(owner,Event.ON_DEFUNCT);
+    onStateChanged(owner, Event.ON_DEFUNCT);
   }
 
   @override
   onInactive(LifecycleOwner owner) {
-    onStateChanged(owner,Event.ON_INACTIVE);
+    onStateChanged(owner, Event.ON_INACTIVE);
   }
 
   @override
   onPause(LifecycleOwner owner) {
-    onStateChanged(owner,Event.ON_PAUSE);
+    onStateChanged(owner, Event.ON_PAUSE);
   }
 
   @override
   onResume(LifecycleOwner owner) {
-    onStateChanged(owner,Event.ON_RESUME);
+    onStateChanged(owner, Event.ON_RESUME);
   }
 
   @override
