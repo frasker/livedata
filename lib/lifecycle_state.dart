@@ -57,7 +57,6 @@ abstract class LifeCycleState<T extends StatefulWidget> extends State<T>
           _mLifecycleOwner.mLifecycleRegistry
               .handleLifecycleEvent(Event.ON_RESUME);
           break;
-        case AppLifecycleState.suspending:
         case AppLifecycleState.paused:
           _mState = _STOPPED;
           _mLifecycleOwner.mLifecycleRegistry
@@ -67,6 +66,8 @@ abstract class LifeCycleState<T extends StatefulWidget> extends State<T>
           _mState = _STARTED;
           _mLifecycleOwner.mLifecycleRegistry
               .handleLifecycleEvent(Event.ON_PAUSE);
+          break;
+        default:
           break;
       }
     }
