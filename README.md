@@ -63,4 +63,4 @@ class _MyHomePageState extends LifeCycleState<MyHomePage> {
    livedata:
     git:
         url: https://github.com/frasker/livedata
-        ref: 1.0.0-alpha1
+        ref: 1.1.0
